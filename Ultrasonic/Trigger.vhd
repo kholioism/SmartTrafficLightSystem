@@ -29,8 +29,8 @@ begin
           port map(clk,'1',reset_counter,output_counter);
 
     process( clk )
-    constant ms250 : std_logic_vector(24 downto 0) := "1101111101011110000100000";
-    constant ms250and100us : std_logic_vector(24 downto 0) := "1101111101011110000101000";
+    constant ms250 : std_logic_vector(24 downto 0) := "1011111010111100001000000";
+    constant ms250and100us : std_logic_vector(24 downto 0) := "1011111011001111101010000";
     begin
         if (output_counter>ms250 and output_counter<ms250and100us) then
             trigger <= '1';

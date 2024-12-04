@@ -50,8 +50,9 @@ begin
     process(clk)
     begin
         if(decimeters<"0001") then
-             buzzer <= '1';
-        else buzzer <= '0';
+             buzzer <= '0';
+        else 
+            buzzer <= '1';
         end if;
     end process;
 

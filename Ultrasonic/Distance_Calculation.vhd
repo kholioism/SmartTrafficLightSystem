@@ -20,23 +20,23 @@ architecture Behavioral of distance_calculation is
       ) ;
     end component ;
 
-    signal pulse_width: std_logic_vector(21 downto 0);
+    signal pulse_width: std_logic_vector(22 downto 0);
     signal actualReset: std_logic:=(not calcReset);
 begin
 
     counterPulse : Counter 
-                   generic map(22) 
+                   generic map(23) 
                    port map(clk,pulse,actualReset,pulse_width);
 
     distance_calculation : process( pulse )
 
         variable result: integer;
-        variable multiplier: std_logic_vector(23 downto 0);
+        variable multiplier: std_logic_vector(24 downto 0);
         
     begin  
         if (pulse='0') then 
             multiplier := pulse_width * "11";
-            result := to_integer(unsigned(multiplier(23 downto 14)));
+            result := to_integer(unsigned(multiplier(24 downto 14)));
             if (result > 458) then
                 distance <= "111111111";
             else

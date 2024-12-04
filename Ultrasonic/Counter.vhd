@@ -1,10 +1,10 @@
-library ieee;
-use ieee.std_logic_1164.all;
-use ieee.std_logic_arith.all;
-use ieee.std_logic_unsigned.all;
+    library ieee;
+    use ieee.std_logic_1164.all;
+    use ieee.std_logic_arith.all;
+    use ieee.std_logic_unsigned.all;
 
 entity Counter is
-    generic(n: POSITIVE := 10)
+    generic(n: POSITIVE := 10);
   port (
     clk,enable,reset:in std_logic; --reset is active low
     o:out std_logic_vector(n-1 downto 0)

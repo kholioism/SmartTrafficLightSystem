@@ -15,10 +15,9 @@ architecture Behavioral of BCD_Distance is
 begin
 
     process( distance )
+    variable i : integer:=0;
+    variable bcd: std_logic_vector(20 downto 0);
     begin
-        variable i : integer:=0;
-        variable bcd: std_logic_vector(20 downto 0);
-
         bcd := (others => '0');
         bcd(8 downto 0) := distance;
 

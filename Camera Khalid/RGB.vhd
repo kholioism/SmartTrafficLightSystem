@@ -26,8 +26,10 @@ begin
 			if (href = '1') then
 				if (first = '1') then
 					bits(7 downto 0) <= Din;
+					first <= '0';
 				else
 					bits(15 downto 8) <= Din;
+					first <= '1';
 				end if ;
 			end if ;
 		end if ;

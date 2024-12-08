@@ -24,11 +24,30 @@ architecture Behavioral of LCD1602_I2C is
     signal scl_toggle  : STD_LOGIC := '0';
     constant CLK_DIV_MAX : integer := 500;
 
-    constant MESSAGE : string := "Hello, LCD1602!";
+    type message_array_type is array(0 to 15) of std_logic_vector(7 downto 0);
+    constant MESSAGE : message_array_type := (
+        x"48", -- 'H'
+        x"65", -- 'e'
+        x"6C", -- 'l'
+        x"6C", -- 'l'
+        x"6F", -- 'o'
+        x"2C", -- ','
+        x"20", -- ' '
+        x"4C", -- 'L'
+        x"43", -- 'C'
+        x"44", -- 'D'
+        x"31", -- '1'
+        x"36", -- '6'
+        x"30", -- '0'
+        x"32", -- '2'
+        x"21", -- '!'
+        x"00"  -- Null terminator
+    );
     signal char_index : integer range 0 to MESSAGE'length := 0;
 
     signal SDA_out : STD_LOGIC := '1';
     signal SDA_dir : STD_LOGIC := '1';
+    signal SCL_signal: STD_LOGIC;
 
 begin
 
@@ -47,7 +66,8 @@ begin
         end if;
     end process;
 
-    SCL <= scl_toggle;
+    SCL_signal <= scl_toggle;
+    SCL <= SCL_signal;
 
     SDA <= 'Z' when SDA_dir = '1' else SDA_out;
 
@@ -58,7 +78,7 @@ begin
             SDA_out <= '1';
             SDA_dir <= '1';
             char_index <= 0;
-        elsif falling_edge(SCL) then
+        elsif falling_edge(SCL_signal) then
             case state is
                 when IDLE =>
                     state <= START;
@@ -84,7 +104,7 @@ begin
                     end if;
 
                 when CMD =>
-                    SDA_dir <= '0'
+                    SDA_dir <= '0';
                     SDA_out <= CMD_PREFIX(7 - char_index);
                     if char_index = 7 then
                         char_index <= 0;
@@ -101,13 +121,16 @@ begin
 
                 when DATA =>
                     SDA_dir <= '0'; -- Drive SDA
-                    SDA_out <= std_logic_vector(to_unsigned(character'pos(MESSAGE(char_index)), 8))(7 - char_index);
-                    if char_index = MESSAGE'length - 1 then
-                        char_index <= 0;
-                        state <= STOP;
-                    else
-                        char_index <= char_index + 1;
+                    SDA_out <= MESSAGE(char_index)(7 - clk_div mod 8); -- Send bit by bit
+                    if clk_div mod 8 = 7 then -- After sending all bits of a byte
+                        if char_index = MESSAGE'length - 1 then
+                            char_index <= 0; -- Reset for next message
+                            state <= STOP; -- Go to STOP state
+                        else
+                            char_index <= char_index + 1; -- Move to next character
+                        end if;
                     end if;
+
 
                 when STOP =>
                     SDA_out <= '1';

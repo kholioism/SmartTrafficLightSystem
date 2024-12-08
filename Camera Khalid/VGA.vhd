@@ -5,12 +5,13 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 entity VGA is
   port (
+    sda: inout std_logic;
     trigger: in std_logic;
     din: in std_logic_vector(7 downto 0);
     clk: in std_logic;
     pclk: in std_logic;
-    comm_done: out std_logic;
-    vsync: in std_logic;
+    scl: out std_logic;
+    v_sync: out std_logic;
     hsync: in std_logic;
     red: out std_logic_vector(4 downto 0);
     green: out std_logic_vector(5 downto 0);
@@ -43,16 +44,14 @@ architecture Structural of VGA is
         Port (
             clk         : in  std_logic;   -- System clock (e.g., 100 MHz)
             reset_n     : in  std_logic;   -- Active low reset
-            start       : in  std_logic;   -- Start signal for I2C transaction
             scl         : out std_logic;   -- I2C clock line
-            sda         : inout std_logic; -- I2C data line
-            done        : out std_logic    -- Transaction complete signal
+            sda         : inout std_logic -- I2C data line
         );
     end component;
 
     component clk20 is
         port (
-          inclk: in std_logic;
+          clk_in: in std_logic;
           reset: in std_logic;
           adjustedclk: out std_logic
         ) ;
@@ -62,12 +61,12 @@ architecture Structural of VGA is
 
 begin
 
-    xclk,scl,sda : clk20 port map(clk,'0',clk_20);
+    xclk : clk20 port map(clk,'0',clk_20);
 
-    reg_comm : i2c_master port map(clk,'1','0',scl,sda,comm_done);
+    reg_comm : i2c_master port map(clk,'1',scl,sda);
 
     Camera_Outputs : RGB port map(din,pclk,hsync,red,green,blue);
 
-    VSYNC : VSYNC port map(trigger,clk,'0',vsync);
+    frame_rate : VSYNC port map(trigger,clk,'0',v_sync);
 
 end architecture ; -- Structural

@@ -35,9 +35,9 @@ begin
 		end if ;
 	end process ; -- write
 	
-		R <= Din(15 downto 11);
-		G <= Din(10 downto 5);
-		B <= Din(4 downto 0);
+		R <= bits(15 downto 11);
+		G <= bits(10 downto 5);
+		B <= bits(4 downto 0);
 
 end Behavioral;
 

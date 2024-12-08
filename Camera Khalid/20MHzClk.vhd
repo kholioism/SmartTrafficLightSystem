@@ -6,7 +6,7 @@ use ieee.numeric_std.all;
 
 entity clk20 is
   port (
-    inclk: in std_logic;
+    clk_in: in std_logic;
     reset: in std_logic;
     adjustedclk: out std_logic
   ) ;
@@ -35,6 +35,6 @@ begin
         end if;
     end process;
 
-    clk_out <= clk_reg;
+    adjustedclk <= clk_reg;
 
 end architecture ; -- Behavioral

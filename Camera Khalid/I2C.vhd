@@ -6,10 +6,8 @@ entity i2c_master is
     Port (
         clk         : in  std_logic;   -- System clock (e.g., 100 MHz)
         reset_n     : in  std_logic;   -- Active low reset
-        start       : in  std_logic;   -- Start signal for I2C transaction
         scl         : out std_logic;   -- I2C clock line
-        sda         : inout std_logic; -- I2C data line
-        done        : out std_logic    -- Transaction complete signal
+        sda         : inout std_logic -- I2C data line
     );
 end i2c_master;
 
@@ -17,12 +15,14 @@ architecture Behavioral of i2c_master is
 
     -- Define I2C clock generation (dividing system clock for ~100kHz)
     constant I2C_CLK_DIV : integer := 499;  -- Adjust based on your FPGA clock
-    signal clk_count     : integer range 0 to I2C_CLK_DIV := 0;
+    signal clk_count     : integer range 0 to 499 := 0;
     signal scl_reg       : std_logic := '1'; -- SCL signal
+    signal go            : std_logic := '0';
+    signal done          : std_logic := '0';
     
     -- I2C states
     type state_type is (
-        IDLE, START, SEND_ADDR, SEND_DATA, STOP, WAIT
+        IDLE, START, SEND_ADDR, SEND_DATA, STOP, WAIT0
     );
     signal state         : state_type := IDLE;
     
@@ -62,7 +62,7 @@ begin
         elsif rising_edge(clk) then
             case state is
                 when IDLE =>
-                    if start = '1' then
+                    if go = '1' then
                         state <= START;
                         sda_out <= '1'; -- SDA idle high
                         done <= '0';
@@ -97,10 +97,10 @@ begin
                 when STOP =>
                     sda_out <= '0'; -- Stop condition
                     if scl_reg = '1' then
-                        state <= WAIT;
+                        state <= WAIT0;
                     end if;
 
-                when WAIT =>
+                when WAIT0 =>
                     sda_out <= '1';
                     done <= '1';
                     state <= IDLE;
@@ -110,7 +110,7 @@ begin
             end case;
 
             -- Update SDA direction
-            if state = IDLE or state = WAIT then
+            if state = IDLE or state = WAIT0 then
                 sda_dir <= '0'; -- Release SDA
             else
                 sda_dir <= '1'; -- Drive SDA
@@ -121,10 +121,9 @@ begin
     process
     begin
         -- Example configuration sequence
-        wait for 10 ms;
-        start <= '1'; -- Start I2C transaction
+        go <= '1'; -- Start I2C transaction
         wait until done = '1';
-        start <= '0'; -- Clear start signal
+        go <= '0'; -- Clear start signal
         wait;
     end process;
 

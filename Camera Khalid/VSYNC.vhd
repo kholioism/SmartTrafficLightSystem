@@ -27,10 +27,9 @@ architecture Behavioral of VSYNC is
         if reset = '1' then
             counter <= 0;
             vsync_reg <= '1';  -- Reset v to idle (HIGH)
-            if (not delay=0) then
+            if (not (delay=0)) then
                 delay <= delay + 1;
                 if (delay = CLOCK_DIVIDE - 1) then
-                    delay <= not delay;
                     delay <= 0;
                 end if ;
             elsif (rising_edge(clk) and (trigger = '1' or (not(counter = 0) and vsync_reg = '0'))) then
@@ -44,7 +43,7 @@ architecture Behavioral of VSYNC is
         end if;
     end process;
 
-    delay : process( vsync_reg )
+    delay_process : process( vsync_reg )
     begin
         if (falling_edge(vsync_reg)) then
             delay <= 1;
@@ -52,6 +51,6 @@ architecture Behavioral of VSYNC is
     end process ; -- delay
 
     -- Assign vsync signal
-    vsync <= vsync_reg;
+    v <= vsync_reg;
 
 end Behavioral;

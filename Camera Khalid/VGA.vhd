@@ -13,9 +13,7 @@ entity VGA is
     scl: out std_logic;
     v_sync: out std_logic;
     hsync: in std_logic;
-    red: out std_logic_vector(4 downto 0);
-    green: out std_logic_vector(5 downto 0);
-    blue: out std_logic_vector(4 downto 0)
+    red,green,blue: out std_logic_vector(3 downto 0)
   ) ;
 end VGA ;
 

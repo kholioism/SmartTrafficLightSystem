@@ -7,9 +7,9 @@ entity RGB is
     Port( Din  : in		STD_LOGIC_VECTOR (7 downto 0);	
 		  pclk : in     std_logic;
 		  href : in     std_logic;
-          R    : out	STD_LOGIC_VECTOR (4 downto 0);
-		  G    : out	STD_LOGIC_VECTOR (5 downto 0);
-		  B    : out	STD_LOGIC_VECTOR (4 downto 0)
+          R    : out	STD_LOGIC_VECTOR (3 downto 0);
+		  G    : out	STD_LOGIC_VECTOR (3 downto 0);
+		  B    : out	STD_LOGIC_VECTOR (3 downto 0)
 		);
 end RGB;
 
@@ -35,9 +35,9 @@ begin
 		end if ;
 	end process ; -- write
 	
-		R <= bits(15 downto 11);
-		G <= bits(10 downto 5);
-		B <= bits(4 downto 0);
+		R <= bits(15 downto 12);
+		G <= bits(10 downto 7);
+		B <= bits(4 downto 1);
 
 end Behavioral;
 

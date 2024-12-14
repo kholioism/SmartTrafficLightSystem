@@ -1,43 +1,83 @@
 library IEEE; 
+
 use IEEE.STD_LOGIC_1164.ALL; 
+
 use IEEE.NUMERIC_STD.ALL; 
+
+ 
 
 entity Traffic_System is 
 
-     generic( 
+ 
+
+    generic( 
 
   
+
         ZERO : std_logic_vector(6 downto 0) := "1000000" ; 
+
         ONE :  std_logic_vector(6 downto 0) := "1111001" ; 
+
         TWO :  std_logic_vector(6 downto 0) := "0100100" ; 
+
         THREE :std_logic_vector(6 downto 0) := "0110000" ; 
+
         FOUR : std_logic_vector(6 downto 0) := "0011001" ; 
+
         FIVE : std_logic_vector(6 downto 0) := "0010010" ; 
+
         SIX :  std_logic_vector(6 downto 0) := "0000010" ; 
+
         SEVEN :std_logic_vector(6 downto 0) := "1111000" ; 
+
         EIGHT :std_logic_vector(6 downto 0) := "0000000" ; 
-        NINE  :std_logic_vector(6 downto 0) := "0010000" ;
+
+        NINE  :std_logic_vector(6 downto 0) := "0010000"  
+
+ 
+
     ); 
 
+     
+
     Port (clk    : in  STD_LOGIC; 
+
           trig   : out STD_LOGIC; 
+
           echo   : in  std_logic_vector (7 downto 0); 
+
           buzzer : out STD_LOGIC; 
+
           segment_mode : in std_logic; 
 
-          data_pin : inout std_logic;     -- Bidirectional data line
+           
+
+           
+
+          data_pin : inout std_logic;     -- Bidirectional data line 
+
           valid    : out std_logic;       -- Validity of output data 
+
+           
 
           ABR,ABY,ABG,CDR,CDY,CDG : out std_logic := '0'; --Relays 
 
            
+
           Segment_A  : out std_logic; 
+
           Segment_B  : out std_logic; 
+
           Segment_C  : out std_logic; 
+
           Segment_D  : out std_logic; 
+
           Segment_E  : out std_logic; 
+
           Segment_F  : out std_logic; 
+
           Segment_G  : out std_logic; 
+
           anode      : out std_logic_vector(3 downto 0)); 
 
 end Traffic_System; 
@@ -46,62 +86,122 @@ end Traffic_System;
 
 architecture Behavioral of Traffic_System is 
 
+ 
+
     type Traffic is (AllRed_1, AB_Green, AB_Yellow, AllRed_2 , CD_Green, CD_Yellow); 
+
     type Density is (Normal, AB_dense, CD_dense); 
+
     signal Traffic_state: Traffic := AllRed_1; 
+
     signal Density_state: Density := Normal; 
+
     signal Traffic_timer:     integer:=0; 
+
     signal Buzzer_timer :     integer:=0; 
+
     signal Density_maxtimeAB: integer:= 30; 
+
     signal Density_maxtimeCD: integer:= 30; 
+
     signal buzzer_signal  : std_logic := '0'; 
 
+     
+
     signal trig_signal  : std_logic := '0';    -- Trig signal to turn on or off 
+
     signal trig_time    : integer := 0; 
+
     signal pulse_time   : integer := 0;        -- Pulse timer 
+
     signal echo_active  : std_logic_vector (7 downto 0);    -- Echo signal active flag 
+
     signal echo_time0   : integer;             -- Echo time counter 
+
     signal echo_time1   : integer;             -- Echo time counter 
+
     signal echo_time2   : integer;             -- Echo time counter 
+
     signal echo_time3   : integer;             -- Echo time counter 
-    signal echo_time4   : integer;             -- Echo time counter
+
+    signal echo_time4   : integer;             -- Echo time counter 
+
     signal echo_time5   : integer;             -- Echo time counter 
+
     signal echo_time6   : integer;             -- Echo time counter 
+
     signal echo_time7   : integer;             -- Echo time counter 
-    signal dist0        : integer := 100;      -- Distance in mm
+
+    signal dist0        : integer := 100;      -- Distance in mm 
+
     signal dist1        : integer := 100;      -- Distance in mm 
-    signal dist2        : integer := 100;      -- Distance in mm
-    signal dist3        : integer := 100;      -- Distance in mm
-    signal dist4        : integer := 100;      -- Distance in mm
-    signal dist5        : integer := 100;      -- Distance in mm
+
+    signal dist2        : integer := 100;      -- Distance in mm 
+
+    signal dist3        : integer := 100;      -- Distance in mm 
+
+    signal dist4        : integer := 100;      -- Distance in mm 
+
+    signal dist5        : integer := 100;      -- Distance in mm 
+
     signal dist6        : integer := 100;      -- Distance in mm 
+
     signal dist7        : integer := 100;      -- Distance in mm 
 
+         
+
+     
+
     type temperature_state is (IDLE, START, WAIT_RESPONSE, READ_DATA, DONE); 
+
     signal state : temperature_state := IDLE; 
+
     signal start_signal : std_logic := '1'; 
+
     signal bit_counter : integer  := 39; 
+
     signal data_reg : std_logic_vector(39 downto 0); 
+
     signal flag: std_logic:='0'; 
+
     signal flag_test: std_logic:='0'; 
+
     signal intern_data : STD_LOGIC; --internal data 
+
     signal timer: integer:=0; 
+
     signal counter: std_logic:='0'; 
+
     signal temperature         :  std_logic_vector(7 downto 0); 
+
     signal temperature_decimal :  std_logic_vector(7 downto 0); 
+
     signal humidity         :  std_logic_vector(7 downto 0); 
-    signal humidity_decimal :  std_logic_vector(7 downto 0);
+
+    signal humidity_decimal :  std_logic_vector(7 downto 0); 
+
     signal checksum    :  std_logic_vector(7 downto 0); 
 
+     
+
     signal Hex_Encoding  : std_logic_vector(6 downto 0) := ZERO; 
-    signal digit         : integer   := 0 ;
+
+    signal digit         : integer   := 0 ; 
+
     signal active_digit  : integer   := 0 ; 
+
     signal clk_1Mhz      : std_logic := '0';    -- Slower clock to count in µs 
+
     signal clk_250hz     : std_logic := '0';    -- Slower 250 Hz clock for seven segment 
+
     signal clk_1Hz       : std_logic := '0';    -- Slower clock to count in s 
+
     signal clk_counter   : integer; 
+
     signal clk_counter2  : integer; 
+
     signal clk_counter3  : integer;               
+
  
 
 begin 

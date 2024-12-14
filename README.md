@@ -28,4 +28,4 @@ Traffic management is a critical challenge in modern cities, and this system dem
 
 ---
 
-This system was developed as part of the **ELCT501 Digital System Design** course at the **German University in Cairo**, under the guidance of **Prof. Mohamed Abdelghany**, **Eng. Mohamed Awaad**, and **Eng. Nada Sayed**.
+This system was developed as part of the **ELCT501 Digital System Design** course at the **German University in Cairo**, under the guidance of **Prof. Mohamed Salem**, **Eng. Mohamed Awaad**, and **Eng. Nada Sayed**.

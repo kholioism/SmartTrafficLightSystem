@@ -1,0 +1,25 @@
+# Component List
+
+- **Solder**
+- **Soldering Iron**
+- **Terminal Blocks**: 4
+- **Red Fork Connectors**: 35-50
+- **VGA Cable**
+- **Relay Modules**: 2 (total 4 channels)
+- **220V LEDs**:
+  - 10x Yellow
+  - 10x Red
+  - 10x Green
+- **Relay Modules**: 4x 2-Channel
+- **Wires**:
+  - 5M Black Wires (0.75mm)
+  - 5M Red Wires (0.75mm)
+- **Ultrasonic Sensors**: 8
+- **Temperature Sensor**: 1x DHT11
+- **Breadboard**: 1
+- **Buzzer**: 1
+- **Jumper Wires**:
+  - 40x Male-Male
+  - 40x Male-Female
+- **OV7670 Camera Module**: 1
+- **LCD Display**: 1x 16x2

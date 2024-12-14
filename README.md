@@ -22,15 +22,6 @@ Each street is equipped with:
 
 ---
 
-## Bonus Features 🎉
-
-This project also allows room for further innovation:
-- **Camera Integration**: Capture the license plates of vehicles that break traffic rules.  
-- **Additional Lanes**: Create smoother traffic flow with a dedicated entry system inspired by German intersections.  
-- **LCD and Advertising Displays**: Expand functionality by showing additional information, ads, or public messages.
-
----
-
 ## Why It Matters 💡
 
 Traffic management is a critical challenge in modern cities, and this system demonstrates how FPGA technology can provide reliable and scalable solutions. By simulating a real-world intersection, this project offers a glimpse into the future of smart cities, where safety, efficiency, and adaptability come together to improve everyday life.
